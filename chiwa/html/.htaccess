@@ -1,0 +1,15 @@
+RewriteEngine On
+RewriteBase /
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.php [L]
+
+Options -Indexes
+
+ErrorDocument 403 /403.php
+
+<Files .htaccess>
+    deny from all
+    order allow,deny
+</Files>

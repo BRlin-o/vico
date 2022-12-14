@@ -70,7 +70,9 @@ var videoLoaded = () => {
     const canvas = createCanvas(video.elt.width, video.elt.height);
 
     canvas.parent('displayer');
-    image(video, 0, 0, width, height);
+    if(loadCount > 0) {
+        // image(video, 0, 0, width, height);
+    }
 }
 
 var looping = () => {

@@ -1,8 +1,8 @@
-// var video_url = "../../static/pose1_media.mp4";
-var video_url = "https://xamp.brlin.org/static/pose1_media.mp4";
+var video_url = "/static/pose1_media.mp4";
+// var video_url = "https://xamp.brlin.org/static/pose1_media.mp4";
 // var video_url = 'https://o365nutc-my.sharepoint.com/personal/s1410832036_ad1_nutc_edu_tw/_layouts/15/embed.aspx?UniqueId=3dc5a442-6851-4332-a609-cc89d97bb2c6&embed=%7B%22hvm%22%3Atrue%2C%22ust%22%3Atrue%7D&referrer=OneUpFileViewer&referrerScenario=EmbedDialog.Create'
-var knn_json_url = "../../static/pose1_KNN.json";
-var knn_json_url = "https://xamp.brlin.org/static/pose1_KNN.json"
+var knn_json_url = "/static/pose1_KNN.json";
+// var knn_json_url = "https://xamp.brlin.org/static/pose1_KNN.json"
 var DEBUG = false;
 var testEle = null;
 var InfoOffcanvas_msg = document.querySelector("#System > .offcanvas-body > .tab-content > #nav-debug > .message");

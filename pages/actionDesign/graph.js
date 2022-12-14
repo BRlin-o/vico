@@ -5,35 +5,61 @@ let video;
 const knnClassifier = ml5.KNNClassifier();
 let poseNet;
 let poses = [];
+let loadCount = 0;
+
+var file_uploadedVideo = document.getElementById("uploadedVideo");
+
+var uploaded = () => {
+    const file = file_uploadedVideo.files[0];
+    return Promise.resolve(URL.createObjectURL(file));
+}
+
+var uploadVideo = () => {
+    uploaded().then((new_video_url) => {
+        video_url = new_video_url;
+        setup();
+        bs_Video_Uploader.hide();
+    })
+}
+
+var preload = () => {
+    console.log("[DEBUG]", "#Start preload");
+}
+
 function setup() {
+    console.log("[DEBUG]", "#Start setup");
     video = createVideo(video_url, videoLoaded);
     video.parent("videoplayer");
     
-    poseNet = ml5.poseNet(
-        video, 
-        {
-            architecture: "ResNet50", 
-            outputStride: 16,
-            maxPoseDetections: 1,
-            detectionType: 'single',
-            scoreThreshold: 0.5,
-            quantBytes: 4,
-            multiplier: 0.75,
-        }, 
-        () => {
-            console.log("Model Loaded!");
-            action_player.disabled = false
-        }
-    );
-    poseNet.on('pose', (results) => {
-        poses = results;
-        if(poses.length > 0){
-            info_message["pose"] = results[0]["pose"];
-            Info_update();
-        }
-    });
+    if(loadCount > 0) {
+        poseNet = ml5.poseNet(
+            video, 
+            {
+                architecture: "ResNet50", 
+                outputStride: 16,
+                maxPoseDetections: 1,
+                detectionType: 'single',
+                scoreThreshold: 0.5,
+                quantBytes: 4,
+                multiplier: 0.75,
+            }, 
+            () => {
+                console.log("Model Loaded!");
+                action_player.disabled = false
+            }
+        );
+        poseNet.on('pose', (results) => {
+            poses = results;
+            if(poses.length > 0){
+                info_message["pose"] = results[0]["pose"];
+                Info_update();
+            }
+        });
+    }
+    
     video.hide();
     noLoop();
+    loadCount++;
 }
 var videoLoaded = () => {
     video.elt.setAttribute("crossorigin", "anonymous | use-credentials");

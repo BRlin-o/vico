@@ -1,0 +1,247 @@
+<html>
+    <head>
+        <title>(n)Action Demo - ViCo</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- bootstrap -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+        <!-- p5 -->
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.0.0/p5.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.0.0/addons/p5.sound.min.js"></script> -->
+        <script src="../../static/p5/p5.js"></script>
+        <!-- ml5 -->
+        <script src="https://unpkg.com/ml5@latest/dist/ml5.min.js"></script>
+        <!-- google font -->
+        <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+        />
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+        <style>
+            html {
+                --mdc-icon-font: 'Material Icons Outlined';
+            }
+            #main {
+                position: relative;
+            }
+
+            #controller {
+                position: absolute;
+                height: 100% !important;
+                width: 100% !important;
+            }
+
+            
+            .background {
+                background-color: quincejelly;
+                height: 100% !important;
+                /* width: auto !important; */
+                width: 100% !important;
+                position: absolute;
+                z-index: -1;
+            }
+            #displayer {
+            }
+            /* #displayer > #videoplayer {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%) rotateY(180deg) !important;
+                background-color: rgb(252, 206, 80);
+                width: auto !important;
+                height: 50vh !important;
+            }
+            #displayer > canvas {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%) rotateY(180deg) !important;
+                background-color: rgb(171, 111, 254);
+                width: auto !important;
+                height: 50vh !important;
+            } */
+            #videoplayer > video {
+                transform: rotateY(180deg) !important;
+                background-color: rgb(234, 128, 76);
+                width: auto !important;
+                height: 50vh !important;
+            }
+            #displayer > canvas {
+                transform: rotateY(180deg) !important;
+                background-color: rgb(171, 111, 254);
+                width: auto !important;
+                height: 50vh !important;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="main" class="container-fuild h-100">
+            <div id="controller" class="d-flex flex-row justify-content-between w-100 h-100">
+                <div class="control-top mt-4">
+                    <!-- <div class="container bg-light text-dark p-2 rounded">
+                    </div> -->
+                </div>
+                <div class="control-bottom m-2 d-flex align-items-center">
+                    <div class="shadow-lg p-3 bg-body rounded">
+                        <div class="d-flex flex-column justify-content-center align-items-center">
+                            <button id="service-action" class="btn btn-primary m-1" data-start="false" disabled>
+                                <span class="material-icons-outlined">
+                                    play_arrow
+                                </span>
+                            </button>
+                            <button id="classify-action" class="btn btn-outline-success m-1" disabled>
+                                <span class="material-icons-outlined">
+                                    play_circle
+                                </span>
+                            </button>
+                            <button class="btn btn-success" onclick="bs_Uploaded.show()">上傳</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="background">
+                <div class="h-100 d-flex flex-column justify-content-center align-items-center">
+                    <div id="videoplayer" class="w-100 d-inline-flex flex-column justify-content-center align-items-center"></div>
+                    <div id="displayer" class="w-100 d-inline-flex flex-column justify-content-center align-items-center">
+                        
+                    </div>
+                </div>
+                
+            </div>
+            
+        </div>
+        <div class="modal fade" id="video-Uploader" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="video-UploaderLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="video-UploaderLabel">上傳影片</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="d-flex justify-content-center">
+                            <div>
+                                <!-- <label for="formFileLg" class="form-label">Large file input example</label> -->
+                                <input class="form-control form-control-lg" id="formFileLg" type="file" onchange="bs_Video_Uploader.hide()">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Understood</button>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="Uploaded" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="UploadedLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header d-flex justify-content-center align-items-center">
+                        <h1 class="modal-title fs-5" id="UploadedLabel">完成上傳</h1>
+                    </div>
+                    <div class="modal-body">
+                        <div class="d-flex justify-content-center">
+                            <div>
+                                <!-- <label for="formFileLg" class="form-label">Large file input example</label> -->
+                                <a class="btn btn-primary" href="https://vico.brlin.org/">回首頁</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Understood</button>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+        <div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="System" aria-labelledby="offcanvasBottomLabel">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvasBottomLabel">System</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body small d-flex flex-column">
+                <nav>
+                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                        <button class="nav-link active" id="nav-service-tab" data-bs-toggle="tab" data-bs-target="#nav-service" type="button" role="tab" aria-controls="nav-service" aria-selected="true">Service</button>
+                        <button class="nav-link" id="nav-device-tab" data-bs-toggle="tab" data-bs-target="#nav-device" type="button" role="tab" aria-controls="nav-device" aria-selected="false">Device</button>
+                        <button class="nav-link" id="nav-debug-tab" data-bs-toggle="tab" data-bs-target="#nav-debug" type="button" role="tab" aria-controls="nav-debug" aria-selected="false">Debug</button>
+                    </div>
+                </nav>
+                <div class="tab-content p-2" id="nav-tabContent">
+                    <div class="tab-pane fade show active" id="nav-service" role="tabpanel" aria-labelledby="nav-service-tab" tabindex="0">
+                        <div id="knn" class="row">
+                            <!-- <div class="col-12">
+                                <label for="config-json" class="form-label">config</label>
+                                <div class="input-group">
+                                    <input class="form-control" type="file" id="config-json">
+                                    <button class="btn btn-outline-secondary" type="button" id="config save">Save</button>
+                                </div>
+                            </div> -->
+                            <div class="col-12">
+                                <label for="kNN-json-url" class="form-label">media video</label>
+                                <div class="input-group">
+                                    <input class="form-control" type="text" id="ipt-video-path" placeholder="http://example.com/example.mp4">
+                                    <button class="btn btn-outline-secondary" type="button" id="btn-video-path">load</button>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <label for="kNN-json-url" class="form-label">kNN JSON</label>
+                                <div class="input-group">
+                                    <input class="form-control" type="text" id="kNN-json-url" placeholder="http://example.com/example.json">
+                                    <button class="btn btn-outline-secondary" type="button" id="btn-kNN-json">load</button>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <label for="class-count" class="form-label">Class</label>
+                                <input class="form-control" type="number" id="class-count" placeholder="0">
+                            </div>
+                            <div class="col-6">
+                                <label for="action-count" class="form-label">Count</label>
+                                <input class="form-control" type="number" id="action-count" placeholder="0">
+                            </div>
+                            <div class="col-12">
+                                <div id="classify" class="row">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="nav-device" role="tabpanel" aria-labelledby="nav-device-tab" tabindex="0">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="Camera-device" checked>
+                                    <label class="form-check-label" for="Camera-device">Camera</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="nav-debug" role="tabpanel" aria-labelledby="nav-debug-tab" tabindex="0">
+                        <pre class="message">
+                            ...
+                        </pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script src="basic.js"></script>
+    <script src="action.js"></script>
+    <script src="graph.js"></script>
+    <script>
+        window.onload = () => {
+        // window.addEventListener("load", () => {
+        // document.addEventListener("DOMContentLoaded", () => {
+            console.log("load");
+
+
+            
+            class_count.value = 4;
+            knn_json.value = knn_json_url;
+            ipt_video_path.value = video_url;
+            bs_Video_Uploader.show();
+        }
+        // )
+    </script>
+</html>
